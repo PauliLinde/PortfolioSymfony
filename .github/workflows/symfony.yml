@@ -21,6 +21,7 @@ jobs:
               with:
                   php-version: '8.2'
                   extensions: mbstring, intl, pdo_sqlite
+                  coverage: none
 
             - name: Copy .env.test.local
               run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
@@ -34,7 +35,7 @@ jobs:
                       ${{ runner.os }}-php-
 
             - name: Install Dependencies
-              run: composer install --no-progress --no-interaction --prefer-dist
+              run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
             - name: Run PHPUnit
               env:
