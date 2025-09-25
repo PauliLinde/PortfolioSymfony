@@ -7,53 +7,46 @@ env:
         MESSENGER_TRANSPORT_DSN: "in-memory://"
         MAILER_DSN: "null://default"
         SECRET: "dummysecret"
+        COMPOSER_MEMORY_LIMIT: -1
 
 phases:
     install:
         runtime-versions:
-            php: 8.2
+            php: 8.1
         commands:
             - echo "PHP version:"
             - php --version
-            - echo "Installing Composer dependencies..."
-            - composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --no-scripts
-            - echo "Installing dev dependencies for testing..."
+            - echo "Installing PHP extensions..."
+            - apt-get update
+            - apt-get install -y php8.1-sqlite3 php8.1-xml php8.1-curl php8.1-mbstring php8.1-zip php8.1-intl php8.1-gd || echo "Some extensions may already be installed"
+            - echo "Composer version:"
+            - composer --version
+            - echo "Installing dependencies..."
             - composer install --no-interaction --prefer-dist --optimize-autoloader
-            - echo "Checking PHPUnit installation..."
-            - php bin/phpunit --version
 
     pre_build:
         commands:
             - echo "Setting up test environment..."
-            - echo "Current directory structure:"
-            - find . -name "*.php" -path "*/tests/*" | head -10
-            - echo "Creating PHPUnit cache directory..."
-            - mkdir -p .phpunit.cache
-            - echo "Setting up environment files..."
-            - cp .env.test .env.test.local 2>/dev/null || echo ".env.test not found, creating minimal config"
+            - cp .env.test .env.test.local 2>/dev/null || echo "Creating minimal .env.test.local"
             - echo "APP_ENV=test" > .env.test.local
             - echo "DATABASE_URL=sqlite:///:memory:" >> .env.test.local
-            - echo "Clearing any existing cache..."
-            - php bin/console cache:clear --env=test --no-warmup || echo "Cache clear failed, continuing..."
-            - echo "Setting up test database..."
-            - php bin/console doctrine:database:create --env=test --if-not-exists || echo "Database already exists or not needed"
-            - php bin/console doctrine:schema:create --env=test || echo "Schema creation failed or not needed"
-            - echo "Running PHPUnit tests with relaxed error handling..."
-            - php -d memory_limit=1G bin/phpunit -c phpunit.dist.xml --stop-on-failure --verbose || echo "Tests failed, checking with minimal config..."
-            - echo "If tests failed, trying with minimal PHPUnit config..."
-            - php -d memory_limit=1G bin/phpunit tests/ --stop-on-failure --verbose
+            - echo "Clearing cache..."
+            - php bin/console cache:clear --env=test || echo "Cache clear failed"
+            - echo "Setting up database..."
+            - php bin/console doctrine:database:create --env=test --if-not-exists || echo "Database setup skipped"
+            - php bin/console doctrine:schema:create --env=test || echo "Schema creation skipped"
+            - echo "Running tests..."
+            - php bin/phpunit -c phpunit.dist.xml --stop-on-failure
 
     build:
         commands:
-            - echo "Clearing cache for production..."
-            - rm -rf var/cache/* || echo "Cache directory cleanup skipped"
-            - echo "Production build finished"
+            - echo "Production build..."
+            - php bin/console cache:clear --env=prod --no-warmup || echo "Production cache clear failed"
 
 artifacts:
     files:
         - '**/*'
     exclude-paths:
-        - '.phpunit.cache/**/*'
         - 'var/cache/**/*'
         - 'var/log/**/*'
-    discard-paths: no
+        - '.phpunit.cache/**/*'
