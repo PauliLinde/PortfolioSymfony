@@ -37,6 +37,11 @@ jobs:
             -   name: Install Dependencies
                 run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
+            - name: Create .env
+              run: |
+                  echo "APP_ENV=test" > .env
+                  echo "DATABASE_URL=sqlite:///:memory:" >> .env
+
             - name: Run PHPUnit
               env:
                   APP_ENV: test
