@@ -2,44 +2,31 @@ version: 0.2
 
 env:
     variables:
-        # Miljövariabler som används under hela builden
         APP_ENV: test
         DATABASE_URL: "sqlite:///:memory:"
         MESSENGER_TRANSPORT_DSN: "in-memory://"
-        MAILER_DSN: null://default
-        SECRET: dummysecret
+        MAILER_DSN: "null://default"
+        SECRET: "dummysecret"
 
 phases:
     install:
         runtime-versions:
             php: 8.2
         commands:
-            - echo Installing system packages...
-            - sudo apt-get update
-            - sudo apt-get install -y sqlite3 libsqlite3-dev
-            - echo Installing PHP extensions...
-            - sudo apt-get install -y php8.2-sqlite3 php8.2-pdo-sqlite
             - echo Installing Composer dependencies...
             - composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
     pre_build:
         commands:
-            - echo Creating test environment...
-            - |
-                echo "APP_ENV=test
-                DATABASE_URL=sqlite:///:memory:
-                MESSENGER_TRANSPORT_DSN=in-memory://
-                MAILER_DSN=null://default
-                SECRET=dummysecret" > .env.test.local
-            - export $(grep -v '^#' .env.test.local | xargs)
-            - echo Running tests...
+            - echo Running PHPUnit tests...
+            - php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
             - php bin/phpunit -c phpunit.dist.xml
 
     build:
         commands:
-            - echo "Clearing cache for production..."
+            - echo Clearing cache for production...
             - APP_ENV=prod DATABASE_URL=mysql://user:pass@host/db MESSENGER_TRANSPORT_DSN=doctrine://default MAILER_DSN=null://default php bin/console cache:clear --no-warmup
-            - echo "Build finished."
+            - echo Production build finished
 
 artifacts:
     files:
