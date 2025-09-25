@@ -29,7 +29,7 @@ phases:
                 SECRET=dummysecret
                 EOL
             - echo "Running PHPUnit tests..."
-            - APP_ENV=test DATABASE_URL=sqlite:///:memory: MESSENGER_TRANSPORT_DSN=in-memory:// MAILER_DSN=null://default SECRET=dummysecret php bin/phpunit -c phpunit.dist.xml
+            - "APP_ENV=test DATABASE_URL=sqlite:///:memory: MESSENGER_TRANSPORT_DSN=in-memory:// MAILER_DSN=null://default SECRET=dummysecret php bin/phpunit -c phpunit.dist.xml"
 
     build:
         commands:
