@@ -40,4 +40,4 @@ jobs:
               env:
                   APP_ENV: test
                   DATABASE_URL: "sqlite:///:memory:"
-              run: vendor/bin/phpunit
+              run: vendor/bin/phpunit -c phpunit.dist.xml
