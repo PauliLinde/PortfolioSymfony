@@ -16,7 +16,6 @@ phases:
             - echo Installing Composer dependencies...
             - composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
             - echo Installing npm dependencies...
-            - npm ci
 
     pre_build:
         commands:
