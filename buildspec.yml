@@ -19,17 +19,14 @@ phases:
 
     pre_build:
         commands:
-            - echo "Creating .env.test.local..."
-            - |
-                cat <<EOL > .env.test.local
-                APP_ENV=test
-                DATABASE_URL=sqlite:///:memory:
-                MESSENGER_TRANSPORT_DSN=in-memory://
-                MAILER_DSN=null://default
-                SECRET=dummysecret
-                EOL
-            - echo "Running PHPUnit tests..."
-            - "APP_ENV=test DATABASE_URL=sqlite:///:memory: MESSENGER_TRANSPORT_DSN=in-memory:// MAILER_DSN=null://default SECRET=dummysecret php bin/phpunit -c phpunit.dist.xml"
+            - echo Creating test environment...
+            - export APP_ENV=test
+            - export DATABASE_URL="sqlite:///:memory:"
+            - export MESSENGER_TRANSPORT_DSN="in-memory://"
+            - export MAILER_DSN="null://default"
+            - export SECRET="dummysecret"
+            - echo Running tests...
+            - php bin/phpunit -c phpunit.dist.xml
 
     build:
         commands:
