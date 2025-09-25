@@ -42,8 +42,9 @@ jobs:
                   echo "APP_ENV=test" > .env
                   echo "DATABASE_URL=sqlite:///:memory:" >> .env
 
-            - name: Run PHPUnit
-              env:
-                  APP_ENV: test
-                  DATABASE_URL: "sqlite:///:memory:"
-              run: vendor/bin/phpunit -c phpunit.dist.xml
+            -   name: Run PHPUnit
+                env:
+                    APP_ENV: test
+                    DATABASE_URL: "sqlite:///:memory:"
+                    MESSENGER_TRANSPORT_DSN: "null://default"
+                run: vendor/bin/phpunit -c phpunit.dist.xml
