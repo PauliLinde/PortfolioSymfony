@@ -34,8 +34,8 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-php-
 
-            - name: Install Dependencies
-              run: composer install --no-interaction --prefer-dist --optimize-autoloader
+            -   name: Install Dependencies
+                run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
             - name: Run PHPUnit
               env:
