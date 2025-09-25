@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+    variables:
+        APP_ENV: test
+        DATABASE_URL: "sqlite:///:memory:"
+        MESSENGER_TRANSPORT_DSN: null://default
+        MAILER_DSN: null://default
+
+phases:
+    install:
+        runtime-versions:
+            php: 8.2
+            nodejs: 20
+        commands:
+            - echo Installing Composer dependencies...
+            - composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+            - echo Installing npm dependencies...
+            - npm ci
+
+    pre_build:
+        commands:
+            - echo Running tests...
+            - php bin/phpunit -c phpunit.dist.xml
+
+    build:
+        commands:
+            - echo Clearing cache and building assets for production...
+            - APP_ENV=prod DATABASE_URL=mysql://user:pass@host/db MESSENGER_TRANSPORT_DSN=doctrine://default MAILER_DSN=null://default php bin/console cache:clear --no-warmup
+            - npm run build
+
+artifacts:
+    files:
+        - '**/*'
+    discard-paths: no
