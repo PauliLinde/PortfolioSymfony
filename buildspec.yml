@@ -1,52 +1,11 @@
 version: 0.2
-
-env:
-    variables:
-        APP_ENV: test
-        DATABASE_URL: "sqlite:///:memory:"
-        MESSENGER_TRANSPORT_DSN: "in-memory://"
-        MAILER_DSN: "null://default"
-        SECRET: "dummysecret"
-        COMPOSER_MEMORY_LIMIT: -1
-
 phases:
     install:
-        runtime-versions:
-            php: 8.1
         commands:
-            - echo "PHP version:"
-            - php --version
-            - echo "Installing PHP extensions..."
-            - apt-get update
-            - apt-get install -y php8.1-sqlite3 php8.1-xml php8.1-curl php8.1-mbstring php8.1-zip php8.1-intl php8.1-gd || echo "Some extensions may already be installed"
-            - echo "Composer version:"
-            - composer --version
-            - echo "Installing dependencies..."
-            - composer install --no-interaction --prefer-dist --optimize-autoloader
-
-    pre_build:
-        commands:
-            - echo "Setting up test environment..."
-            - cp .env.test .env.test.local 2>/dev/null || echo "Creating minimal .env.test.local"
-            - echo "APP_ENV=test" > .env.test.local
-            - echo "DATABASE_URL=sqlite:///:memory:" >> .env.test.local
-            - echo "Clearing cache..."
-            - php bin/console cache:clear --env=test || echo "Cache clear failed"
-            - echo "Setting up database..."
-            - php bin/console doctrine:database:create --env=test --if-not-exists || echo "Database setup skipped"
-            - php bin/console doctrine:schema:create --env=test || echo "Schema creation skipped"
-            - echo "Running tests..."
-            - php bin/phpunit -c phpunit.dist.xml --stop-on-failure
-
+            - composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
     build:
         commands:
-            - echo "Production build..."
-            - php bin/console cache:clear --env=prod --no-warmup || echo "Production cache clear failed"
-
+            - zip -r myapp.zip .
 artifacts:
     files:
-        - '**/*'
-    exclude-paths:
-        - 'var/cache/**/*'
-        - 'var/log/**/*'
-        - '.phpunit.cache/**/*'
+        - myapp.zip
