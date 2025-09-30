@@ -1,13 +1,9 @@
 nelmio_cors:
     defaults:
-        origin_regex: false
-        allow_origin: ['https://portfolio-svelte-kit-rose.vercel.app']
-        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-        allow_headers: ['Content-Type', 'Authorization']
-        expose_headers: ['Link']
+        origin_regex: true
+        allow_origin: ['https://portfolio-svelte-kit-rose\.vercel\.app/?']
+        allow_methods: ['GET', 'OPTIONS', 'POST']
+        allow_headers: ['Content-Type']
         max_age: 3600
     paths:
-        '^/.*':
-            allow_origin: ['https://portfolio-svelte-kit-rose.vercel.app']
-            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-            allow_headers: ['Content-Type', 'Authorization']
+        '^/newMessage': ~
