@@ -1,9 +1,9 @@
 nelmio_cors:
     defaults:
         origin_regex: true
-        allow_origin: ['https://portfolio-svelte-kit-rose\.vercel\.app/?']
+        allow_origin: ['https://.*\.vercel\.app$']
         allow_methods: ['GET', 'OPTIONS', 'POST']
-        allow_headers: ['Content-Type']
+        allow_headers: ['Content-Type', 'Authorization']
         max_age: 3600
     paths:
-        '^/newMessage': ~
+        '^/': ~
