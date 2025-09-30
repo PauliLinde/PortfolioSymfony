@@ -1,0 +1,52 @@
+applications:
+  app:
+    source:
+      root: "/"
+    
+    type: "php:8.2"
+    
+    build:
+      flavor: composer
+    
+    dependencies:
+      php:
+        composer/composer: "^2"
+    
+    hooks:
+      build: |
+        set -e
+      deploy: |
+        set -e
+        bin/console cache:clear
+        bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
+    
+    web:
+      locations:
+        "/":
+          root: "public"
+          passthru: "/index.php"
+          allow: false
+          rules:
+            '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf)$':
+              allow: true
+            '^/robots\.txt$':
+              allow: true
+    
+    mounts:
+      "/var/cache":
+        source: "storage"
+        source_path: "cache"
+      "/var/log":
+        source: "storage"
+        source_path: "log"
+      "/var/sessions":
+        source: "storage"
+        source_path: "sessions"
+
+routes:
+  "https://{default}/":
+    type: upstream
+    upstream: "app:http"
+  "https://www.{default}/":
+    type: redirect
+    to: "https://{default}/"
