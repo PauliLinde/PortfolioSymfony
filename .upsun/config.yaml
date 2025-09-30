@@ -5,6 +5,11 @@ applications:
 
     type: "php:8.2"
 
+    runtime:
+        extensions:
+            - pdo_pgsql
+            - pgsql
+
     variables:
         env:
             APP_ENV: 'prod'
