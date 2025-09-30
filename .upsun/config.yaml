@@ -19,12 +19,14 @@ applications:
         composer/composer: "^2"
 
     hooks:
-      build: |
-        set -e
-      deploy: |
-        set -e
-        bin/console cache:clear
-        bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
+        build: |
+            set -e
+            # Copy .env.prod to .env for production
+            cp .env.prod .env
+        deploy: |
+            set -e
+            bin/console cache:clear
+            bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
 
     web:
       locations:
