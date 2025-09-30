@@ -2,24 +2,37 @@ applications:
   app:
     source:
       root: "/"
-    
+
     type: "php:8.2"
-    
+
+    runtime:
+        extensions:
+            - pdo_pgsql
+            - pgsql
+
+    variables:
+        env:
+            APP_ENV: 'prod'
+            APP_DEBUG: '0'
+            APP_RUNTIME_MODE: 'web=0'
+
     build:
       flavor: composer
-    
+
     dependencies:
       php:
         composer/composer: "^2"
-    
+
     hooks:
-      build: |
-        set -e
-      deploy: |
-        set -e
-        bin/console cache:clear
-        bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
-    
+        build: |
+            set -e
+            # Copy .env.prod to .env for production
+            cp .env.prod .env
+        deploy: |
+            set -e
+            bin/console cache:clear
+            bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
+
     web:
       locations:
         "/":
@@ -31,7 +44,7 @@ applications:
               allow: true
             '^/robots\.txt$':
               allow: true
-    
+
     mounts:
       "/var/cache":
         source: "storage"

@@ -17,18 +17,6 @@ class MessageController extends AbstractController
     public function newMessage(Request $request, EntityManagerInterface $entityManager,
                                BrevoService $brevoService): JsonResponse
     {
-        // Skapa response med CORS headers
-        $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', 'https://portfolio-svelte-kit-rose.vercel.app');
-        $response->headers->set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        $response->headers->set('Access-Control-Max-Age', '3600');
-
-        // Hantera OPTIONS
-        if ($request->getMethod() === 'OPTIONS') {
-            $response->setStatusCode(204);
-            return $response;
-        }
 
         $data = json_decode($request->getContent(), true);
 
