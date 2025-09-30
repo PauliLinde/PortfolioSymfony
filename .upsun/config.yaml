@@ -15,11 +15,10 @@ applications:
     hooks:
       build: |
         set -e
-        bin/console cache:clear
       deploy: |
         set -e
         bin/console cache:clear
-        bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+        bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
     
     web:
       locations:
