@@ -18,22 +18,6 @@ class MessageController extends AbstractController
                                BrevoService $brevoService): JsonResponse
     {
 
-        $allowedOrigins = [
-            'http://localhost:5173',
-            'http://localhost:5174'
-        ];
-
-        $origin = $request->headers->get('Origin');
-        $allowOrigin = in_array($origin, $allowedOrigins) ? $origin : 'http://localhost:5173';
-
-        if ($request->getMethod() === 'OPTIONS') {
-            return new JsonResponse(null, 200, [
-                'Access-Control-Allow-Origin' => $allowOrigin,
-                'Access-Control-Allow-Methods' => 'POST, OPTIONS',
-                'Access-Control-Allow-Headers' => 'Content-Type',
-            ]);
-        }
-
         $data = json_decode($request->getContent(), true);
 
         if(!$data){
