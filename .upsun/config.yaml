@@ -9,6 +9,7 @@ applications:
         env:
             APP_ENV: 'prod'
             APP_DEBUG: '0'
+            APP_RUNTIME_MODE: 'web=0'
 
     build:
       flavor: composer
