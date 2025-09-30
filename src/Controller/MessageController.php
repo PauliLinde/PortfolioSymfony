@@ -13,17 +13,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class MessageController extends AbstractController
 {
 
-    #[Route('/newMessage', methods: ['POST', 'OPTIONS'])]
+    #[Route('/newMessage', methods: ['POST'])]
     public function newMessage(Request $request, EntityManagerInterface $entityManager,
-                               BrevoService $brevoService): JsonResponse
+                                BrevoService $brevoService): JsonResponse
     {
-
         $data = json_decode($request->getContent(), true);
 
         if(!$data || !isset($data['email']) || !isset($data['message'])){
-            $response->setData(['error' => 'Invalid data']);
-            $response->setStatusCode(400);
-            return $response;
+            return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
         try {
@@ -36,12 +33,9 @@ class MessageController extends AbstractController
             $entityManager->persist($message);
             $entityManager->flush();
 
-            $response->setData(['success' => true, 'id' => $message->getId()]);
-            return $response;
+            return new JsonResponse(['success' => true, 'id' => $message->getId()]);
         } catch (\Exception $e) {
-            $response->setData(['error' => $e->getMessage()]);
-            $response->setStatusCode(500);
-            return $response;
+            return new JsonResponse(['error' => $e->getMessage()], 500);
         }
     }
 }
