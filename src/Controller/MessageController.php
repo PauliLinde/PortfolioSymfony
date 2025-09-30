@@ -17,21 +17,43 @@ class MessageController extends AbstractController
     public function newMessage(Request $request, EntityManagerInterface $entityManager,
                                BrevoService $brevoService): JsonResponse
     {
+        // Skapa response med CORS headers
+        $response = new JsonResponse();
+        $response->headers->set('Access-Control-Allow-Origin', 'https://portfolio-svelte-kit-rose.vercel.app');
+        $response->headers->set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        $response->headers->set('Access-Control-Max-Age', '3600');
+
+        // Hantera OPTIONS
+        if ($request->getMethod() === 'OPTIONS') {
+            $response->setStatusCode(204);
+            return $response;
+        }
 
         $data = json_decode($request->getContent(), true);
 
-        if(!$data){
-            return new JsonResponse(['error' => 'Invalid data'], 400);
+        if(!$data || !isset($data['email']) || !isset($data['message'])){
+            $response->setData(['error' => 'Invalid data']);
+            $response->setStatusCode(400);
+            return $response;
         }
 
-        $message = new Message();
-        $message->setEmail($data['email']);
-        $message->setMessage($data['message']);
+        try {
+            $message = new Message();
+            $message->setEmail($data['email']);
+            $message->setMessage($data['message']);
 
-        $brevoService->sendEmail($data['email'], $data['message']);
+            $brevoService->sendEmail($data['email'], $data['message']);
 
-        $entityManager->persist($message);
-        $entityManager->flush();
-        return new JsonResponse(['success' => true, 'id' => $message->getId()]);
+            $entityManager->persist($message);
+            $entityManager->flush();
+
+            $response->setData(['success' => true, 'id' => $message->getId()]);
+            return $response;
+        } catch (\Exception $e) {
+            $response->setData(['error' => $e->getMessage()]);
+            $response->setStatusCode(500);
+            return $response;
+        }
     }
 }
