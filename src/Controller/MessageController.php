@@ -19,10 +19,6 @@ class MessageController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if(!$data || !isset($data['email']) || !isset($data['message'])){
-            return new JsonResponse(['error' => 'Invalid data'], 400);
-        }
-
         $response = $messageService->addToDatabase($data['email'], $data['message']);
         return new JsonResponse($response);
     }
