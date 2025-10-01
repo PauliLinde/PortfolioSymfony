@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Message;
 use App\Service\BrevoService;
+use App\Service\MessageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,8 +15,7 @@ class MessageController extends AbstractController
 {
 
     #[Route('/newMessage', methods: ['POST'])]
-    public function newMessage(Request $request, EntityManagerInterface $entityManager,
-                                BrevoService $brevoService): JsonResponse
+    public function newMessage(Request $request, MessageService $messageService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -23,19 +23,7 @@ class MessageController extends AbstractController
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
-        try {
-            $message = new Message();
-            $message->setEmail($data['email']);
-            $message->setMessage($data['message']);
-
-            $brevoService->sendEmail($data['email'], $data['message']);
-
-            $entityManager->persist($message);
-            $entityManager->flush();
-
-            return new JsonResponse(['success' => true, 'id' => $message->getId()]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['error' => $e->getMessage()], 500);
-        }
+        $response = $messageService->addToDatabase($data['email'], $data['message']);
+        return new JsonResponse($response);
     }
 }

@@ -39,7 +39,7 @@ class BrevoService
                 "
             ]);
 
-            $result = $this->apiInstance->sendTransacEmail($sendSmtpEmail);
+            $this->apiInstance->sendTransacEmail($sendSmtpEmail);
         } catch (\Exception $e) {
             error_log('Brevo API Error: ' . $e->getMessage());
             throw $e;
