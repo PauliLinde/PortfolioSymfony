@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Message;
-use App\Service\BrevoService;
 use App\Service\MessageService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Validator\MessageValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,11 +13,19 @@ class MessageController extends AbstractController
 {
 
     #[Route('/newMessage', methods: ['POST'])]
-    public function newMessage(Request $request, MessageService $messageService): JsonResponse
+    public function newMessage(Request $request, MessageService $messageService,
+                                MessageValidator $validator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        $response = $messageService->addToDatabase($data['email'], $data['message']);
-        return new JsonResponse($response);
+        try {
+            $validator->validateData($data);
+            $response = $messageService->addToDatabase($data['email'], $data['message']);
+            return new JsonResponse($response);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Server error'], 500);
+        }
     }
 }

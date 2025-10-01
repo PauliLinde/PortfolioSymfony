@@ -2,30 +2,42 @@
 
 namespace App\Validator;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-
 class MessageValidator
 {
-    public function validateName($name): ?JsonResponse
+    public function validateData(?array $data): void
+    {
+        if (!$data) {
+            throw new \InvalidArgumentException('Invalid JSON data');
+        }
+
+        if (!isset($data['email'])) {
+            throw new \InvalidArgumentException('Email field is missing');
+        }
+
+        if (!isset($data['message'])) {
+            throw new \InvalidArgumentException('Message field is missing');
+        }
+
+        $this->validateEmail($data['email']);
+        $this->validateMessage($data['message']);
+    }
+    public function validateName($name): void
     {
         if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
-            return new JsonResponse(['error' => 'Only letters and white space allowed'], 400);
+            throw new \InvalidArgumentException('Only letters and white space allowed');
         }
-        return null;
     }
-    public function validateEmail($email): ?JsonResponse
+    public function validateEmail($email): void
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return new JsonResponse(['error' => 'Invalid email format'], 400);
+            throw new \InvalidArgumentException('Email cannot be empty');
         }
-        return null;
     }
-    public function validateMessage($message): ?JsonResponse
+    public function validateMessage($message): void
     {
         if (!preg_match("/^[a-zA-Z-' ]*$/",$message)) {
-            return new JsonResponse(['error' => 'Only letters and white space allowed'], 400);
+            throw new \InvalidArgumentException('Only letters and white space allowed');
         }
-        return null;
     }
 
 }
