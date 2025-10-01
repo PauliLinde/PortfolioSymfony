@@ -26,7 +26,7 @@ class MessageService
             $this->entityManager->persist($newMessage);
             $this->entityManager->flush();
 
-            return ['success' => true, 'id' => $newMessage->getId()];
+            return ['success' => true];
         } catch (\Exception $e) {
             throw new \RuntimeException('Failed to save message: ' . $e->getMessage());
         }
