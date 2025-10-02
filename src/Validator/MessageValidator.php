@@ -36,8 +36,8 @@ class MessageValidator
     }
     public function validateMessage($message): void
     {
-        if (strlen($message) > 1000) {
-            throw new \InvalidArgumentException('Message is too long (max 1000 characters)');
+        if (empty($message)) {
+            throw new \InvalidArgumentException('Message is required');
         }
     }
 
