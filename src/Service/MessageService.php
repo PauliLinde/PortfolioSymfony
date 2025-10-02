@@ -14,14 +14,15 @@ class MessageService
         $this->entityManager = $entityManager;
     }
 
-    public function addToDatabase($email, $message): array
+    public function addToDatabase($name, $email, $message): array
     {
         try {
             $newMessage = new Message();
+            $newMessage->setName($name);
             $newMessage->setEmail($email);
             $newMessage->setMessage($message);
 
-            $this->brevoService->sendEmail($email, $message);
+            $this->brevoService->sendEmail($name, $email, $message);
 
             $this->entityManager->persist($newMessage);
             $this->entityManager->flush();
