@@ -12,16 +12,17 @@ class BrevoService
     private $apiInstance;
     private $myEmail;
 
-    public function __construct(string $brevoApiKey, string $myEmail)
+    public function __construct(string $brevoApiKey, string $myEmail, ?TransactionalEmailsApi $apiInstance = null)
+    {
+        $this->apiInstance = $apiInstance  ?? $this->createApiInstance($brevoApiKey);
+        $this->myEmail = $myEmail;
+    }
+
+    private function createApiInstance(string $brevoApiKey): TransactionalEmailsApi
     {
         $config = Configuration::getDefaultConfiguration()->setApiKey('api-key', $brevoApiKey);
-
-        $httpClient = new Client([
-            'verify' => false,
-        ]);
-
-        $this->apiInstance = new TransactionalEmailsApi($httpClient, $config);
-        $this->myEmail = $myEmail;
+        $httpClient = new Client(['verify' => false]);
+        return new TransactionalEmailsApi($httpClient, $config);
     }
 
     public function sendEmail($email, $message): void
