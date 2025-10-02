@@ -16,6 +16,10 @@ class Message
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    private ?string $name;
+
+    #[ORM\Column]
+    #[Assert\NotBlank]
     private ?string $email;
 
     #[ORM\Column]
@@ -30,6 +34,16 @@ class Message
     public function setId(?int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
     }
 
     public function getEmail(): ?string
