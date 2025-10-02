@@ -36,8 +36,8 @@ class MessageValidator
     }
     public function validateMessage($message): void
     {
-        if (!preg_match("/^[a-zA-Z-' ]*$/",$message)) {
-            throw new \InvalidArgumentException('Only letters and white space allowed');
+        if (strlen($message) > 1000) {
+            throw new \InvalidArgumentException('Message is too long (max 1000 characters)');
         }
     }
 
