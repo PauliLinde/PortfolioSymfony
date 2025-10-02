@@ -18,6 +18,7 @@ class MessageValidator
             throw new \InvalidArgumentException('Message field is missing');
         }
 
+        $this->validateName($data['name']);
         $this->validateEmail($data['email']);
         $this->validateMessage($data['message']);
     }
