@@ -30,7 +30,7 @@ class MessageValidator
     public function validateEmail($email): void
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Email cannot be empty');
+            throw new \InvalidArgumentException('Invalid email address');
         }
     }
     public function validateMessage($message): void
