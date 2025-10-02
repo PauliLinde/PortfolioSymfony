@@ -20,7 +20,7 @@ class MessageController extends AbstractController
 
         try {
             $validator->validateData($data);
-            $response = $messageService->addToDatabase($data['email'], $data['message']);
+            $response = $messageService->addToDatabase($data['name'], $data['email'], $data['message']);
             return new JsonResponse($response);
         } catch (\InvalidArgumentException $e) {
             return new JsonResponse(['error' => $e->getMessage()], 400);
