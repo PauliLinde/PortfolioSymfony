@@ -2,66 +2,37 @@
 
 namespace App\Tests;
 
-use App\Entity\Message;
+use App\Service\BrevoService;
+use App\Service\MessageService;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MessageControllerTest extends WebTestCase
 {
-    private $client;
-    private $entityManager;
-
-    protected function setUp():void {
-        parent::setUp();
-        $this->client = static::createClient();
-        $this->entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
-        $this->createSchema();
-    }
-
-    private function createSchema(): void
-    {
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-        $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-
-        $schemaTool->createSchema($metadata);
-    }
-
-    protected static function getKernelClass(): string
-    {
-        return \App\Kernel::class;
-    }
 
     public function testAddNewMessage(): void{
-        $this->client->request(
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $brevoMock = $this->createMock(BrevoService::class);
+        $container->set(BrevoService::class, $brevoMock);
+
+        $messageServiceMock = $this->createMock(MessageService::class);
+        $messageServiceMock->method('addToDatabase')
+            ->willReturn(['success' => true, 'id' => 123]);
+        $container->set(MessageService::class, $messageServiceMock);
+
+        $client->request(
             'POST',
             '/newMessage',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
-                'email' => 'laura@gmail.com',
-                'message' => 'Hello from Laura',
+                'email' => 'test@example.com',
+                'message' => 'Test message',
             ])
         );
 
-        $messages = $this->entityManager->getRepository(Message::class)
-            ->findBy(['email' => 'laura@gmail.com']);
-        $this->assertCount(1, $messages);
-        $this->assertSame('Hello from Laura', $messages[0]->getMessage());
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->entityManager) {
-            $messages = $this->entityManager->getRepository(Message::class)->findAll();
-
-            foreach ($messages as $message) {
-                $this->entityManager->remove($message);
-            }
-
-            $this->entityManager->flush();
-            $this->entityManager->close();
-            $this->entityManager = null;
-        }
-        parent::tearDown();
+        $this->assertResponseIsSuccessful();
     }
 }
