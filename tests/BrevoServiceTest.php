@@ -12,7 +12,7 @@ class BrevoServiceTest extends TestCase
         $apiMoch = $this->createMock(TransactionalEmailsApi::class);
         $brevoService = new BrevoService('test', 'test@mail.com', $apiMoch);
 
-        $brevoService->sendEmail('test@mail.com', 'test message');
+        $brevoService->sendEmail('testname','test@mail.com', 'test message');
 
         $this->assertTrue(true);
     }

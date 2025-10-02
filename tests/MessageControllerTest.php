@@ -28,6 +28,7 @@ class MessageControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
+                'name' => 'test',
                 'email' => 'test@example.com',
                 'message' => 'Test message',
             ])

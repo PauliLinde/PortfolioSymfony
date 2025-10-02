@@ -14,9 +14,10 @@ class MessageServiceTest extends TestCase
         $entityManagerMock = $this->createMock(EntityManagerInterface::class);
 
         $messageService = new MessageService($brevoMock, $entityManagerMock);
+        $name = 'test';
         $email = 'test@test.com';
         $message = 'test';
-        $response = $messageService->addToDatabase($email, $message);
+        $response = $messageService->addToDatabase($name, $email, $message);
         self::assertTrue($response['success']);
     }
 }
