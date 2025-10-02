@@ -25,7 +25,7 @@ class BrevoService
         return new TransactionalEmailsApi($httpClient, $config);
     }
 
-    public function sendEmail($email, $message): void
+    public function sendEmail($name, $email, $message): void
     {
         try{
             $sendSmtpEmail = new SendSmtpEmail([
@@ -33,7 +33,7 @@ class BrevoService
                 'sender' => ['name' => 'Portfolio Contact', 'email' => $this->myEmail],
                 'to' => [['email' => $this->myEmail]],
                 'htmlContent' => "
-                    <h3>New message from portfolio</h3>
+                    <h3>New message from {$name}</h3>
                     <p><strong>From:</strong> {$email}</p>
                     <p><strong>Message:</strong></p>
                     <p>" . nl2br(htmlspecialchars($message)) . "</p>
