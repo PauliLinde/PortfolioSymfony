@@ -9,4 +9,4 @@ nelmio_cors:
         allow_credentials: false
     paths:
         '^/newMessage':
-            allow_origin: ['https://portfolio-svelte-kit-rose.vercel.app']
+            allow_origin: ['https://paulinas-portfolio.vercel.app']
